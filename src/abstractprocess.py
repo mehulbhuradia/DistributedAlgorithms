@@ -13,13 +13,13 @@ class Message:
     """
     sender = 0
     content = ''
-    counter = 0
+    timestamp = 0
 
-    def __init__(self, content, sender, counter):
+    def __init__(self, content, sender, timestamp):
         self.sender = sender
-        self.counter = counter
+        self.timestamp = timestamp
         self.content = content
-
+        
     def encode(self) -> bytes:
         """
         Make sure we are serializable with EOF line ending
@@ -77,6 +77,9 @@ class AbstractProcess(ABC):
         self.addresses: dict = addresses
         self.host, self.port = self.addresses.pop(self.idx)
         self.buffer = MessageBuffer()
+        num_processes=len(self.addresses.keys())
+        self.vector_clock=[0 for i in range(num_processes+1)]
+
 
     @abstractmethod
     async def algorithm(self):

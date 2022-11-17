@@ -1,10 +1,12 @@
 # Python Template
+
 This code is offered as a template for the course IN4150.
 This template is tested on Ubuntu 20.04 (should also work on Windows and Mac OSX).
-NOTE: When running locally Python >= 3.8  is required.
+NOTE: When running locally Python >= 3.8 is required.
 Asyncio ([docs](https://docs.python.org/3/library/asyncio.html)) is heavily used for the implementation of this templates.
 
 ## File structure
+
 - **src:** Holds all the python source files
 - **resources/addresses.txt:** List of the addresses of all the processes that are participating in the algorithm.
 - **resources/addresses_docker.txt:** Same but then for the docker implementation because the hostnames are different.
@@ -12,21 +14,26 @@ Asyncio ([docs](https://docs.python.org/3/library/asyncio.html)) is heavily used
 - **docker-compose.yml:** Yaml file that describes the system for docker-compose.
 
 ## Remarks
+
 1. Feel free to change any of the files. This template is offered as starting point with working messaging between distributed processes.
 2. `addresses_docker.txt` is loading into the docker image as `addresses.txt`. You don't have to change the source code when switching from running locally for debugging to running with docker-compose.
 3. Both `addresses.txt` and `addresses_docker.txt` follow the structure of `<processId> <hostname/ip/> <port>` for each line.
+
 ## Prerequisites
-* Docker
-* Docker-compose
-* (Python >= 3.8 if running locally)
+
+- Docker
+- Docker-compose
+- (Python >= 3.8 if running locally)
 
 ## Run via docker-compose
+
 ```bash
 docker-compose build
 docker-compose up
 ```
 
 Expected output:
+
 ```text
 Attaching to in4150-python-template_node0_1, in4150-python-template_node1_1
 node1_1  | Serving on ('172.22.0.3', 9091)
@@ -62,11 +69,15 @@ in4150-python-template_node0_1 exited with code 0
 ```
 
 ## Run locally (for debugging)
+
 Install dependencies:
-```bash 
+
+```bash
 pip install -r requirements.txt
 ```
+
 Run algorithm:
+
 ```bash
 python3.8 -u src/main.py 0 &
 python3.8 -u src/main.py 1 &
