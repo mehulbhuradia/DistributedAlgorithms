@@ -110,6 +110,8 @@ class AbstractProcess(ABC):
         :param to: pid of the other process as mapped in the addresses' dictionary
         :return:
         """
+        # adding a radom delay to every message
+        await self._random_delay()
         # Retrieve address from address dictionary
         host, port = self.addresses[to]
         reader, writer = await asyncio.open_connection(host, port)

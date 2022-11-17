@@ -41,7 +41,7 @@ class BirmanProcess(AbstractProcess):
             # Retrieve message
             msg: Message = self.buffer.get()
 
-            print(f"Process {self.idx} received message with timestamp: { msg.timestamp}")
+            print(f"Process {self.idx} received message from process {msg.sender} with timestamp: { msg.timestamp} ")
             for index,clockval in enumerate(msg.timestamp):
                 
                 # wait untile conditions are met
@@ -59,11 +59,11 @@ class BirmanProcess(AbstractProcess):
                         print(f"Message Timestamp: {msg.timestamp}, Vector Clock: {self.vector_clock}")
                         return
             
-            print("Message from process {} is delivered".format(msg.sender))
+            print(f"Delivered Message from process {msg.sender} to process {self.idx}")
             print(f"Message Timestamp: {msg.timestamp}, Vector Clock: {self.vector_clock}")
             for index,clockval in enumerate(msg.timestamp):
                 self.vector_clock[index] = max(clockval,self.vector_clock[index])
             print("Updating process clock")
-            print(f"Message Timestamp: {msg.timestamp}, Vector Clock: {self.vector_clock}")           
+            print(f"Message Timestamp: {msg.timestamp}, New Vector Clock: {self.vector_clock}")           
         else:
             self.running = False
