@@ -33,6 +33,7 @@ async def run_process(pid: int):
     addresses = load_addresses('resources/addresses.txt')
     # Start own process
     p = BirmanProcess(pid, addresses)
+    p.test_case = 1  # Choose which test case (0, 1, 2, 3) to run. 0 is no test case.
     # Start server for incomming connections
     await p.start_server()
     # Wait a bit for all processes to start up
