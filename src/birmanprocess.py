@@ -14,7 +14,7 @@ class BirmanProcess(AbstractProcess):
     
     async def algorithm(self):
 
-
+        causual_order=[]
         # Only run in the beginning
         if self.first_cycle:
             # Compose message
@@ -62,10 +62,15 @@ class BirmanProcess(AbstractProcess):
                         return
             
             print(f"Delivered Message from process {msg.sender} to process {self.idx}")
+            causual_order.append(msg)
             print(f"Message Timestamp: {msg.timestamp}, Vector Clock: {self.vector_clock}")
             for index,clockval in enumerate(msg.timestamp):
                 self.vector_clock[index] = max(clockval,self.vector_clock[index])
             print("Updating process clock")
             print(f"Message Timestamp: {msg.timestamp}, New Vector Clock: {self.vector_clock}")           
         else:
+            for idx,m in enumerate(causual_order):
+                print(f"Message No.: {idx+1}, Sender: {msg.sender}, Timestamp: { msg.timestamp} ")
             self.running = False
+
+        
