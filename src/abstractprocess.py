@@ -67,6 +67,7 @@ class AbstractProcess(ABC):
     host = ''
     port = 0
     buffer = None
+    delay_buffer = None
     # Variables to control the random delay each process has while executing the algorithm
     # Set both to 0 to remove any delays
     delay_min = 0
@@ -77,6 +78,7 @@ class AbstractProcess(ABC):
         self.addresses: dict = addresses
         self.host, self.port = self.addresses.pop(self.idx)
         self.buffer = MessageBuffer()
+        self.delay_buffer = MessageBuffer()
         num_processes=len(self.addresses.keys())
         self.vector_clock=[0 for i in range(num_processes+1)]
 
