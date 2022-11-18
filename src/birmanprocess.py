@@ -11,8 +11,8 @@ class BirmanProcess(AbstractProcess):
     """
 
     
-    total_msg=6 # number of messages sent by other processes (num_msg*(num_processes-1))
-    num_msg = 3
+    total_msg=10 # number of messages sent by other processes (num_msg*(num_processes-1))
+    num_msg = 5
     causual_order=[]
     async def algorithm(self):
         # Only run in the beginning
@@ -32,29 +32,30 @@ class BirmanProcess(AbstractProcess):
             
             #  broadcast to everyone
             for to in list(self.addresses.keys()):
-                # adding a radom delay to every message before it is sent but after updating the vector clock
-                await self._random_delay()
+                
                 await self.send_message(msg, to)
             self.num_msg-=1
 
+        
         # If we have a new message
         if self.buffer.has_messages():
-            # Retrieve message
+            # adding a radom delay to every message before it is sent but after updating the vector clock
+            await self._random_delay()
+            # Retrieve message    
             msg: Message = self.buffer.get()
 
             print(f"Process {self.idx} received message from process {msg.sender} with timestamp: { msg.timestamp} ")
-            for index,clockval in enumerate(msg.timestamp):
-                
+            for index,clockval in enumerate(msg.timestamp): 
                 # wait untile conditions are met
                 if index == msg.sender:
-                    if not clockval == self.vector_clock[index] + 1:
+                    if not (clockval == (self.vector_clock[index] + 1)):
                         self.buffer.put(msg)
                         print(index)
                         print("Message from process {} is added to the message buffer.".format(msg.sender))
                         print(f"Message Timestamp: {msg.timestamp}, Vector Clock: {self.vector_clock}")
                         return
                 else:
-                    if not  clockval <= self.vector_clock[index]:
+                    if not  (clockval <= self.vector_clock[index]):
                         self.buffer.put(msg)
                         print("Message from process {} is added to the message buffer.".format(msg.sender))
                         print(f"Message Timestamp: {msg.timestamp}, Vector Clock: {self.vector_clock}")
