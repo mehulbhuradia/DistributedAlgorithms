@@ -9,14 +9,14 @@ class BirmanProcess(AbstractProcess):
     The function send_message(message, to) can be used to send asynchronous messages to other processes.
     The variables first_cycle and num_echo are examples of variables custom to the EchoProcess algorithm.
     """
-    first_cycle = True
-    num_echo = 15
-    
-    async def algorithm(self):
 
-        causual_order=[]
+    
+    total_msg=6 # number of messages sent by other processes (num_msg*(num_processes-1))
+    num_msg = 3
+    causual_order=[]
+    async def algorithm(self):
         # Only run in the beginning
-        if self.first_cycle:
+        if self.num_msg!=0:
             # Compose message
             # Get first address we can find
             
@@ -35,8 +35,7 @@ class BirmanProcess(AbstractProcess):
                 # adding a radom delay to every message before it is sent but after updating the vector clock
                 await self._random_delay()
                 await self.send_message(msg, to)
-            self.first_cycle = False
-
+            self.num_msg-=1
 
         # If we have a new message
         if self.buffer.has_messages():
@@ -62,15 +61,16 @@ class BirmanProcess(AbstractProcess):
                         return
             
             print(f"Delivered Message from process {msg.sender} to process {self.idx}")
-            causual_order.append(msg)
+            temp_clock=self.vector_clock.copy()
+            self.causual_order.append({"msg":msg,"clock":temp_clock})
             print(f"Message Timestamp: {msg.timestamp}, Vector Clock: {self.vector_clock}")
             for index,clockval in enumerate(msg.timestamp):
                 self.vector_clock[index] = max(clockval,self.vector_clock[index])
             print("Updating process clock")
             print(f"Message Timestamp: {msg.timestamp}, New Vector Clock: {self.vector_clock}")           
-        else:
-            for idx,m in enumerate(causual_order):
-                print(f"Message No.: {idx+1}, Sender: {msg.sender}, Timestamp: { msg.timestamp} ")
+        elif len(self.causual_order)==self.total_msg:
+            for idx,m in enumerate(self.causual_order):
+                print(f"Message No.: {idx+1}, Sender: {m['msg'].sender}, Timestamp: { m['msg'].timestamp}, Clock: {m['clock']}")
             self.running = False
 
         

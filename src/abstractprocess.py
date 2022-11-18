@@ -70,7 +70,7 @@ class AbstractProcess(ABC):
     # Variables to control the random delay each process has while executing the algorithm
     # Set both to 0 to remove any delays
     delay_min = 0
-    delay_max = 1
+    delay_max = 3
 
     def __init__(self, idx: int, addresses):
         self.idx = idx
