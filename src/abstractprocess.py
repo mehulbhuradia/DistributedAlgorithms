@@ -82,12 +82,19 @@ class AbstractProcess(ABC):
         num_processes=len(self.addresses.keys())
         self.vector_clock=[0 for i in range(num_processes+1)]
 
-
     @abstractmethod
     async def algorithm(self):
         """
         Needs to be implemented.
         See EchoProcess as an example.
+        :return:
+        """
+        pass
+
+    @abstractmethod
+    async def broadcast(self):
+        """
+        Needs to be implemented.
         :return:
         """
         pass
@@ -142,6 +149,16 @@ class AbstractProcess(ABC):
         await self.server.start_serving()
         print(f'Serving on {", ".join(str(sock.getsockname()) for sock in self.server.sockets)}')
 
+    async def algorithm_task(self):
+        while self.running:
+            await self.algorithm()
+            await self._random_delay()
+
+    async def broadcast_task(self):
+        while self.running:
+            await self.broadcast()
+            await self._random_delay()
+
     async def run(self):
         """
         Run the main loop of the process.
@@ -149,9 +166,8 @@ class AbstractProcess(ABC):
         :return:
         """
         async with self.server:
-            while self.running:
-                await self.algorithm()
-                await self._random_delay()
+            # Run algorithm and broadcast concurrently
+            await asyncio.gather(self.algorithm_task(), self.broadcast_task())
             print('Stopping server')
             # Wait a bit for a more graceful exit of all the nodes
             await asyncio.sleep(2)

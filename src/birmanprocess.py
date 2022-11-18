@@ -15,6 +15,23 @@ class BirmanProcess(AbstractProcess):
     num_msg = 1
     causal_order=[]
 
+    async def broadcast(self):
+        # SEND MSG
+        if self.num_msg != 0:
+            self.vector_clock[self.idx] += 1
+            timestamp = self.vector_clock.copy()
+            msg = Message("Hello world", self.idx, timestamp)
+            print(f"Process {self.idx} broadcasting message with timestamp: {msg.timestamp}")
+
+            #  BROADCAST
+            for to in list(self.addresses.keys()):
+                # adding a radom delay to every message before it is sent but after updating the vector clock
+                if self.idx == 0 and to == list(self.addresses.keys())[-1]:
+                    await self._random_delay(10, 10)
+                await self.send_message(msg, to)
+
+            self.num_msg -= 1
+
     async def algorithm(self):
         # RECEIVE MSG:
         #   if delivery condition is true -> deliver
@@ -55,22 +72,6 @@ class BirmanProcess(AbstractProcess):
                     self.vector_clock[index] = max(clockval, self.vector_clock[index])
                 print("Updating process clock")
                 print(f"Message Timestamp: {msg.timestamp}, New Vector Clock: {self.vector_clock}")
-
-        # SEND MSG
-        if self.num_msg != 0:
-            self.vector_clock[self.idx] += 1
-            timestamp = self.vector_clock
-            msg = Message("Hello world", self.idx, timestamp)
-            print(f"Process {self.idx} broadcasting message with timestamp: {msg.timestamp}")
-
-            #  BROADCAST
-            for to in list(self.addresses.keys()):
-                # adding a radom delay to every message before it is sent but after updating the vector clock
-                if self.idx == 0 and to == list(self.addresses.keys())[-1]:
-                    await self._random_delay(10,10)
-                await self.send_message(msg, to)
-
-            self.num_msg -= 1
 
         # EXIT CONDITION
         if len(self.causal_order) == self.total_msg:
