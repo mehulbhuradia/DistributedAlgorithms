@@ -32,6 +32,8 @@ class BirmanProcess(AbstractProcess):
             
             #  broadcast to everyone
             for to in list(self.addresses.keys()):
+                # adding a radom delay to every message before it is sent but after updating the vector clock
+                await self._random_delay()
                 await self.send_message(msg, to)
             self.first_cycle = False
 
@@ -49,13 +51,13 @@ class BirmanProcess(AbstractProcess):
                     if not clockval == self.vector_clock[index] + 1:
                         self.buffer.put(msg)
                         print(index)
-                        print("Message from process {} is delayed".format(msg.sender))
+                        print("Message from process {} is added to the message buffer.".format(msg.sender))
                         print(f"Message Timestamp: {msg.timestamp}, Vector Clock: {self.vector_clock}")
                         return
                 else:
                     if not  clockval <= self.vector_clock[index]:
                         self.buffer.put(msg)
-                        print("Message from process {} is delayed".format(msg.sender))
+                        print("Message from process {} is added to the message buffer.".format(msg.sender))
                         print(f"Message Timestamp: {msg.timestamp}, Vector Clock: {self.vector_clock}")
                         return
             
