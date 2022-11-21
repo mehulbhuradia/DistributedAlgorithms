@@ -14,7 +14,7 @@ class BirmanProcess(AbstractProcess):
 
 
     total_msg=2 # number of messages sent by other processes (num_msg*(num_processes-1))
-    num_msg = 1
+    num_msg = 1  # Number of broadcasts made by each process
     msg_sent = 0
     msg_log: dict = {}
     causal_order=[]
