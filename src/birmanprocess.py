@@ -62,7 +62,7 @@ class BirmanProcess(AbstractProcess):
             self.vector_clock[self.idx] += 1
             timestamp = self.vector_clock.copy()
             msg = Message("Hello world", self.idx, timestamp)
-            print(f"Process {self.idx} broadcasting message with timestamp: {msg.timestamp}")
+            print(f"Process {self.idx} BROADCASTING message with timestamp: {msg.timestamp}")
 
             #  BROADCAST
             for to in list(self.addresses.keys()):
@@ -82,36 +82,31 @@ class BirmanProcess(AbstractProcess):
             # Receive message
             msg: Message = self.buffer.get()
 
-            print(f"Process {self.idx} received message from process {msg.sender} with timestamp: {msg.timestamp} ")
+            print(f"Process {self.idx} RECEIVED message from process {msg.sender} with timestamp: {msg.timestamp} ")
             deliverable = True
             for index, clockval in enumerate(msg.timestamp):
                 #CHECK DELIVERY CONDITION
                 if index == msg.sender:
                     if not (clockval == (self.vector_clock[index] + 1)):
                         deliverable = False
-                        # await self._random_delay()
                         self.buffer.put(msg)
-                        print("DELAYED1")
-                        print(index)
-                        print("Message from process {} is added to the message buffer.".format(msg.sender))
-                        print(f"Message Timestamp: {msg.timestamp}, Vector Clock: {self.vector_clock}")
+                        print(F"Process {self.idx} DELAYED(1) message from process {msg.sender}")
+                        # print(f"Message Timestamp: {msg.timestamp}, Vector Clock: {self.vector_clock}")
                 elif not (clockval <= self.vector_clock[index]):
                     deliverable = False
-                    # await self._random_delay()
                     self.buffer.put(msg)
-                    print("DELAYED2")
-                    print("Message from process {} is added to the message buffer.".format(msg.sender))
-                    print(f"Message Timestamp: {msg.timestamp}, Vector Clock: {self.vector_clock}")
+                    print(F"Process {self.idx} DELAYED(2) message from process {msg.sender}")
+                    # print(f"Message Timestamp: {msg.timestamp}, Vector Clock: {self.vector_clock}")
             # DELIVER
             if deliverable:
-                print(f"Delivered Message from process {msg.sender} to process {self.idx}")
+                print(F"Process {self.idx} DELIVERED message from process {msg.sender}")
                 temp_clock = self.vector_clock.copy()
                 self.causal_order.append({"msg": msg, "clock": temp_clock})
-                print(f"Message Timestamp: {msg.timestamp}, Vector Clock: {self.vector_clock}")
+                # print(f"Message Timestamp: {msg.timestamp}, Vector Clock: {self.vector_clock}")
                 for index, clockval in enumerate(msg.timestamp):
                     self.vector_clock[index] = max(clockval, self.vector_clock[index])
-                print("Updating process clock")
-                print(f"Message Timestamp: {msg.timestamp}, New Vector Clock: {self.vector_clock}")
+                # print("Updating process clock")
+                # print(f"Message Timestamp: {msg.timestamp}, New Vector Clock: {self.vector_clock}")
 
         # EXIT CONDITION
         if len(self.causal_order) == self.total_msg and sum(self.msg_log.values()) == self.total_msg:
