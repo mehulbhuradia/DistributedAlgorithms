@@ -2,9 +2,11 @@
 
 To run the test cases for this exercise, change `p.test_case` to 0, 1 or 2 in `main.py` to choose the test case to run.
 Then run the following commands on the terminal at the root of the project:
-`docker-compose build && docker-compose up`
+`docker-compose build && docker-compose up`.
 
 The global variable `num_msg` gives the number of broadcasts made by each node and can be adjusted.
+
+Logs for a single process/node can be accessed using `docker-compose logs node#` where # represents the PID.
 
 ## Test case 0: Concurrent send events
 
